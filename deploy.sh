@@ -9,7 +9,7 @@ cd $dirName
 if [ ! -d ".git" ]; then
   sudo git init
   sudo git remote add origin https://github.com/adeavoice/$dirName
-  echo "Finished initialization git and origin in Test folder"
+  echo "Finished initialization git and origin in $dirName folder"
 fi
 sudo git pull origin master
 echo "Finished git pull"
