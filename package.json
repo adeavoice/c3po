@@ -1,0 +1,14 @@
+{
+  "name": "c3po",
+  "version": "1.0.0",
+  "description": "Telegram Bot App",
+  "main": "app.js",
+  "author": "Alice & Deain",
+  "license": "?",
+  "dependencies": {
+    "angular": "^1.4.9",
+    "express": "^4.13.4",
+    "mongodb": "^2.1.4",
+    "telegraf": "3.6.1"
+  }
+}
