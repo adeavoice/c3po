@@ -73,7 +73,35 @@ var schedule = { monday :   [ {time:' 8:30', end:' 9:10', subject:'Биолог�
 // Translate Day Of The Week (tdotw) - Перевести с английского день недели
 var tdotw = function(day_of_the_week) {
   var days = {"monday":"понедельник", "tuesday":"вторник", "wednesday":"среда", "thursday":"четверг", "friday":"пятница", "saturday":"суббота", "sunday":"воскресенье"};
-  return days[day_of_the_week];
+  //  return days[day_of_the_week];
+  switch(day_of_the_week) {
+    case "monday"   :return "понедельник";
+    case "tuesday"  :return "вторник";
+    case "wednesday":return "среда";
+    case "thursday" :return "четверг";
+    case "friday"   :return "пятница";
+    case "saturday" :return "суббота";
+    case "sunday"   :return "воскресенье";
+  }
+}
+
+var schmonday = function(ind) {
+  return schedule.monday[ind].time + ' - ' + schedule.monday[ind].end + ' ' + schedule.monday[ind].subject + ' ' + schedule.monday[ind].room + '\n';
+}
+
+var schday0 = function(day_of_the_week, ind) {
+  return schedule.monday[ind];
+  //.monday.[ind].time + ' - ' + schedule.monday[ind].end + ' ' + schedule.monday[ind].subject + ' ' + schedule.monday[ind].room + '\n';
+}
+
+var schday1 = function(day_of_the_week, ind) {
+  return schedule.day_of_the_week;
+  //.monday.[ind].time + ' - ' + schedule.monday[ind].end + ' ' + schedule.monday[ind].subject + ' ' + schedule.monday[ind].room + '\n';
+}
+
+var schday2 = function(day_of_the_week, ind) {
+  return schedule.day_of_the_week[ind];
+  //.monday.[ind].time + ' - ' + schedule.monday[ind].end + ' ' + schedule.monday[ind].subject + ' ' + schedule.monday[ind].room + '\n';
 }
 
 // "Получить расписание по дню недели"
@@ -83,32 +111,33 @@ var getScheduleDay = function(state, day_of_the_week) {
       switch(day_of_the_week){
         case "monday":    var s = "понедельник:\n";
                           for ( var i = 0; i < schedule.monday.length; i++ ) {
-                            s = s + schedule[day_of_the_week][i].time + ' ' + schedule[day_of_the_week][i].subject + '\n';
+                            //s = s + schedule.monday[i].time + ' - ' + schedule.monday[i].end + ' ' + schedule.monday[i].subject + ' ' + schedule.monday[i].room + '\n';
+                            s = s + schmonday(i);
                           }
                           return s;
         case "tuesday":   var s = "вторник:\n ";
                           for ( var i = 0; i < schedule.tuesday.length; i++ ) {
-                            s = s + schedule.tuesday[i].time + ' ' + schedule.tuesday[i].subject + '\n';
+                            s = s + schedule.tuesday[i].time + ' - ' + schedule.tuesday[i].end + ' ' + schedule.tuesday[i].subject + ' ' + schedule.tuesday[i].room + '\n';
                           }
                           return s;
         case "wednesday": var s = "среду:\n";
                           for ( var i = 0; i < schedule.wednesday.length; i++ ) {
-                            s = s + schedule.wednesday[i].time + ' ' + schedule.wednesday[i].subject + '\n';
+                            s = s + schedule.wednesday[i].time + ' - ' + schedule.wednesday[i].end + ' ' + schedule.wednesday[i].subject + ' ' + schedule.wednesday[i].room + '\n';
                           }
                           return s;
         case "thursday":  var s = "четверг:\n";
                           for ( var i = 0; i < schedule.thursday.length; i++ ) {
-                            s = s + schedule.thursday[i].time + ' ' + schedule.thursday[i].subject + '\n';
+                            s = s + schedule.thursday[i].time + ' - ' + schedule.thursday[i].end + ' ' + schedule.thursday[i].subject + ' ' + schedule.thursday[i].room + '\n';
                           }
                           return s;
         case "friday":    var s = "пятницу:\n";
                           for ( var i = 0; i < schedule.friday.length; i++ ) {
-                            s = s + schedule.friday[i].time + ' ' + schedule.friday[i].subject + '\n';
+                            s = s + schedule.friday[i].time + ' - ' + schedule.friday[i].end + ' ' + schedule.friday[i].subject + ' ' + schedule.friday[i].room + '\n';
                           }
                           return s;
         case "saturday":   var s = "субботу:\n";
                           for ( var i = 0; i < schedule.saturday.length; i++ ) {
-                            s = s + schedule.saturday[i].time + ' ' + schedule.saturday[i].subject + '\n';
+                            s = s + schedule.saturday[i].time + ' - ' + schedule.saturday[i].end + ' ' + schedule.saturday[i].subject + ' ' + schedule.saturday[i].room + '\n';
                           }
                           return s;
         case "sunday":    return "воскресенье:\nБез уроков. Отдыхай, дружок :)";
@@ -246,6 +275,32 @@ app.on('text', function(ctx) {
   //5. Есть ли (у меня) [предмет] (в) [сегодня/день недели]?
   //var Q5 = /есть ли|есть(?= у меня)|предметы(?= сегодня|)|занятия(?= сегодня)/.test(txt);
   var Answer = "";
+
+/*
+var schmonday = function(ind) {
+  return schedule.monday[ind].time + ' - ' + schedule.monday[ind].end + ' ' + schedule.monday[ind].subject + ' ' + schedule.monday[ind].room + '\n';
+}
+
+var schday0 = function(day_of_the_week, ind) {
+  return schedule.monday[ind];
+}
+
+var schday1 = function(day_of_the_week, ind) {
+  return schedule.day_of_the_week;
+}
+
+var schday2 = function(day_of_the_week, ind) {
+  return schedule.day_of_the_week[ind];
+}
+*/
+
+  if (test(txt) == "schday0") {
+    ctx.reply( schday0("monday",1) );
+  } else if (test(txt) == "schday1") {
+    ctx.reply( schday1("monday",1) );
+  } else if (test(txt) == "schday2") {
+    ctx.reply( schday2("monday",1) );
+  }
 
   if (Q1) {
     if (week) {
