@@ -28,38 +28,38 @@ var app         = new TelegramBot(Config.bot_token);
 ////////////////////////////////////////////////////////////////////////////////
 // Описываем переменную-объект "Школьное расписание"
 ////////////////////////////////////////////////////////////////////////////////
-var schedule = { monday :   [ {time:' 8:30', end:' 9:10', subject:'Биология', room:'39а'},
-                              {time:' 9:30', end:'10:10', subject:'История', room:'Б'},
+var schedule = { monday :   [ {time:'08:30', end:'09:10', subject:'Биология', room:'39а'},
+                              {time:'09:30', end:'10:10', subject:'История', room:'Б'},
                               {time:'10:30', end:'11:10', subject:'Математика', room:'45'},
                               {time:'11:25', end:'12:05', subject:'Физкультура', room:'ТЗ'}],
-                 tuesday:   [ {time:' 8:30', end:' 9:10', subject:'Английский язык/Математика', room:'39/45'},
-                              {time:' 9:30', end:'10:10', subject:'Русский язык', room:'37'},
+                 tuesday:   [ {time:'08:30', end:'09:10', subject:'Английский язык/Математика', room:'39/45'},
+                              {time:'09:30', end:'10:10', subject:'Русский язык', room:'37'},
                               {time:'10:30', end:'11:10', subject:'Литература', room:'37'},
                               {time:'11:25', end:'12:05', subject:'Русский язык', room:'37'},
                               {time:'12:20', end:'13:00', subject:'Математика/Английский язык', room:'45/10'},
                               {time:'13:15', end:'13:55', subject:'География', room:'41'},
                               {time:'14:05', end:'14:45', subject:'---/СК математика', room:'45'}],
-                 wednesday: [ {time:' 8:30', end:' 9:10', subject:'Математика', room:'45'},
-                              {time:' 9:30', end:'10:10', subject:'Самароведение', room:'42'},
+                 wednesday: [ {time:'08:30', end:'09:10', subject:'Математика', room:'45'},
+                              {time:'09:30', end:'10:10', subject:'Самароведение', room:'42'},
                               {time:'10:30', end:'11:10', subject:'Английский язык', room:'39/10'},
                               {time:'11:25', end:'12:05', subject:'Изобразительное искусство', room:'Б'},
                               {time:'12:20', end:'13:00', subject:'Математика', room:'45'},
                               {time:'13:15', end:'13:55', subject:'Естествознание', room:'ф2'},
                               {time:'14:05', end:'14:45', subject:'СК математика/---', room:'45'}],
-                 thursday:  [ {time:' 8:30', end:' 9:10', subject:'Технология', room:'49/19'},
-                              {time:' 9:30', end:'10:10', subject:'Технология', room:'49/19'},
+                 thursday:  [ {time:'08:30', end:'09:10', subject:'Технология', room:'49/19'},
+                              {time:'09:30', end:'10:10', subject:'Технология', room:'49/19'},
                               {time:'10:30', end:'11:10', subject:'Русский язык', room:'36'},
                               {time:'11:25', end:'12:05', subject:'Русский язык', room:'36'},
                               {time:'12:20', end:'13:00', subject:'Физкультура', room:'БЗ'},
                               {time:'13:15', end:'13:55', subject:'Литература', room:'36'}],
-                 friday:    [ {time:' 8:30', end:' 9:10', subject:'История', room:'ф3'},
-                              {time:' 9:30', end:'10:10', subject:'Информатика/Математика', room:'48/45'},
+                 friday:    [ {time:'08:30', end:'09:10', subject:'История', room:'ф3'},
+                              {time:'09:30', end:'10:10', subject:'Информатика/Математика', room:'48/45'},
                               {time:'10:30', end:'11:10', subject:'Музыка', room:'Муз.зал'},
                               {time:'11:25', end:'12:05', subject:'Математика/Информатика', room:'45/48'},
                               {time:'12:20', end:'13:00', subject:'Обществознание', room:'ф3'},
                               {time:'13:15', end:'13:55', subject:'Математика', room:'45'}],
-                 saturday:  [ {time:' 8:30', end:' 9:10', subject:'Русский язык', room:'44'},
-                              {time:' 9:20', end:'10:00', subject:'Физкультура', room:'МЗ'},
+                 saturday:  [ {time:'08:30', end:'09:10', subject:'Русский язык', room:'44'},
+                              {time:'09:20', end:'10:00', subject:'Физкультура', room:'МЗ'},
                               {time:'10:10', end:'10:50', subject:'Математика', room:'45'},
                               {time:'11:00', end:'11:40', subject:'Русский язык', room:'44'},
                               {time:'11:50', end:'12:30', subject:'Литература', room:'44'},
@@ -70,10 +70,15 @@ var schedule = { monday :   [ {time:' 8:30', end:' 9:10', subject:'Биолог�
 ////////////////////////////////////////////////////////////////////////////////
 // Описываем вспомогательные функции
 ////////////////////////////////////////////////////////////////////////////////
-// Translate Day Of The Week (tdotw) - Перевести с английского день недели
-var tdotw = function(day_of_the_week) {
-  var days = {"monday":"понедельник", "tuesday":"вторник", "wednesday":"среда", "thursday":"четверг", "friday":"пятница", "saturday":"суббота", "sunday":"воскресенье"};
-  //  return days[day_of_the_week];
+// Translate Day Of The Week (tdotw) - Переводит в зависимости от номера состояния state название дня недели с английского на русский
+var tdotw = function(state, day_of_the_week) {
+  var days = [
+      {monday:"понедельник", tuesday:"вторник", wednesday:"среда", thursday:"четверг", friday:"пятница", saturday:"суббота", sunday:"воскресенье"},
+      {monday:"понедельник", tuesday:"вторник", wednesday:"среду", thursday:"четверг", friday:"пятницу", saturday:"субботу", sunday:"воскресенье"},
+      {monday:"в понедельник", tuesday:"во вторник", wednesday:"в среду", thursday:"в четверг", friday:"в пятницу", saturday:"в субботу", sunday:"в воскресенье"},
+    ];
+  return days[state][day_of_the_week];
+/*
   switch(day_of_the_week) {
     case "monday"   :return "понедельник";
     case "tuesday"  :return "вторник";
@@ -83,66 +88,46 @@ var tdotw = function(day_of_the_week) {
     case "saturday" :return "суббота";
     case "sunday"   :return "воскресенье";
   }
+*/
 }
 
-var schmonday = function(ind) {
-  return schedule.monday[ind].time + ' - ' + schedule.monday[ind].end + ' ' + schedule.monday[ind].subject + ' ' + schedule.monday[ind].room + '\n';
+// Выводит урок по названию свойства объекта schedule, указанный нами в параметре функции day_of_the_week в текстовом виде (строке)
+var getSubjectOnDay = function(day_of_the_week, ind) {
+  return schedule[day_of_the_week][ind].time + ' - ' + schedule[day_of_the_week][ind].end + ' ' + schedule[day_of_the_week][ind].subject + ' ' + schedule[day_of_the_week][ind].room + '\n';
 }
 
-var schday0 = function(day_of_the_week, ind) {
-  return schedule.monday[ind];
-  //.monday.[ind].time + ' - ' + schedule.monday[ind].end + ' ' + schedule.monday[ind].subject + ' ' + schedule.monday[ind].room + '\n';
-}
-
-var schday1 = function(day_of_the_week, ind) {
-  return schedule.day_of_the_week;
-  //.monday.[ind].time + ' - ' + schedule.monday[ind].end + ' ' + schedule.monday[ind].subject + ' ' + schedule.monday[ind].room + '\n';
-}
-
-var schday2 = function(day_of_the_week, ind) {
-  return schedule.day_of_the_week[ind];
-  //.monday.[ind].time + ' - ' + schedule.monday[ind].end + ' ' + schedule.monday[ind].subject + ' ' + schedule.monday[ind].room + '\n';
+// Выводит расписание на день по названию свойства объекта schedule, указанный нами в параметре функции day_of_the_week в текстовом виде (строке)
+// За исключением Воскресенья, для Воскресенья - свой текст
+// + в зависимости от значения state
+var getScheduleOnDay = function(state, day_of_the_week, text_of_sunday) {
+  if (day_of_the_week == "sunday") {
+    return text_of_sunday;
+  } else {
+    var s = tdotw(state, day_of_the_week) + ":\n";
+    for ( var i = 0; i < schedule[day_of_the_week].length; i++ ) {
+      s = s + getSubjectOnDay(day_of_the_week, i);
+    }
+    return s;
+  }
 }
 
 // "Получить расписание по дню недели"
-var getScheduleDay = function(state, day_of_the_week) {
+var getScheduleInfo = function(day_of_the_week, state) {
   switch(state){
     case 1:
+        return getScheduleOnDay(1, day_of_the_week, "воскресенье:\nБез уроков. Отдыхай, дружок :)");
+/*
       switch(day_of_the_week){
-        case "monday":    var s = "понедельник:\n";
-                          for ( var i = 0; i < schedule.monday.length; i++ ) {
-                            //s = s + schedule.monday[i].time + ' - ' + schedule.monday[i].end + ' ' + schedule.monday[i].subject + ' ' + schedule.monday[i].room + '\n';
-                            s = s + schmonday(i);
-                          }
-                          return s;
-        case "tuesday":   var s = "вторник:\n ";
-                          for ( var i = 0; i < schedule.tuesday.length; i++ ) {
-                            s = s + schedule.tuesday[i].time + ' - ' + schedule.tuesday[i].end + ' ' + schedule.tuesday[i].subject + ' ' + schedule.tuesday[i].room + '\n';
-                          }
-                          return s;
-        case "wednesday": var s = "среду:\n";
-                          for ( var i = 0; i < schedule.wednesday.length; i++ ) {
-                            s = s + schedule.wednesday[i].time + ' - ' + schedule.wednesday[i].end + ' ' + schedule.wednesday[i].subject + ' ' + schedule.wednesday[i].room + '\n';
-                          }
-                          return s;
-        case "thursday":  var s = "четверг:\n";
-                          for ( var i = 0; i < schedule.thursday.length; i++ ) {
-                            s = s + schedule.thursday[i].time + ' - ' + schedule.thursday[i].end + ' ' + schedule.thursday[i].subject + ' ' + schedule.thursday[i].room + '\n';
-                          }
-                          return s;
-        case "friday":    var s = "пятницу:\n";
-                          for ( var i = 0; i < schedule.friday.length; i++ ) {
-                            s = s + schedule.friday[i].time + ' - ' + schedule.friday[i].end + ' ' + schedule.friday[i].subject + ' ' + schedule.friday[i].room + '\n';
-                          }
-                          return s;
-        case "saturday":   var s = "субботу:\n";
-                          for ( var i = 0; i < schedule.saturday.length; i++ ) {
-                            s = s + schedule.saturday[i].time + ' - ' + schedule.saturday[i].end + ' ' + schedule.saturday[i].subject + ' ' + schedule.saturday[i].room + '\n';
-                          }
-                          return s;
+        case "monday":    return getScheduleOnDay("monday");
+        case "tuesday":   return getScheduleOnDay("tuesday");
+        case "wednesday": return getScheduleOnDay("wednesday");
+        case "thursday":  return getScheduleOnDay("thursday");
+        case "friday":    return getScheduleOnDay("friday");
+        case "saturday":  return getScheduleOnDay("saturday");
         case "sunday":    return "воскресенье:\nБез уроков. Отдыхай, дружок :)";
         default:          return "";
       }
+*/
     case 2:
       switch(day_of_the_week){
         case "monday":    var s = 'в понедельник в '+ schedule[day_of_the_week][0].time;
@@ -196,7 +181,6 @@ var getScheduleDay = function(state, day_of_the_week) {
       }
     default:          return "";
   }
-  
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -276,45 +260,19 @@ app.on('text', function(ctx) {
   //var Q5 = /есть ли|есть(?= у меня)|предметы(?= сегодня|)|занятия(?= сегодня)/.test(txt);
   var Answer = "";
 
-/*
-var schmonday = function(ind) {
-  return schedule.monday[ind].time + ' - ' + schedule.monday[ind].end + ' ' + schedule.monday[ind].subject + ' ' + schedule.monday[ind].room + '\n';
-}
-
-var schday0 = function(day_of_the_week, ind) {
-  return schedule.monday[ind];
-}
-
-var schday1 = function(day_of_the_week, ind) {
-  return schedule.day_of_the_week;
-}
-
-var schday2 = function(day_of_the_week, ind) {
-  return schedule.day_of_the_week[ind];
-}
-*/
-
-  if (test(txt) == "schday0") {
-    ctx.reply( schday0("monday",1) );
-  } else if (test(txt) == "schday1") {
-    ctx.reply( schday1("monday",1) );
-  } else if (test(txt) == "schday2") {
-    ctx.reply( schday2("monday",1) );
-  }
-
   if (Q1) {
     if (week) {
       var Answer = "Расписание на неделю...\n";
       for ( var i = 0; i < AllDays.length; i++ ) {
-        Answer = Answer + getScheduleDay(AllDays[i]) + "\n";
+        Answer = Answer + getScheduleInfo(AllDays[i]) + "\n";
       }
     } else {
       if (Days.length > 0) {
         var Answer = "Вот расписание на ";
         for ( var i = 0; i < Days.length; i++ ) {
-          // Самописные функции tdotw, getScheduleDay
+          // Самописные функции getScheduleInfo
           //Answer = Answer + tdotw(Days[i]) + ":\n";
-          Answer = Answer + getScheduleDay(1, Days[i]) + "\n";
+          Answer = Answer + getScheduleInfo(Days[i], 1) + "\n";
         }
       } else { Answer = "Упс... Не знаю, что и сказать, что-то пошло не так..."; }
     }
@@ -323,9 +281,8 @@ var schday2 = function(day_of_the_week, ind) {
     if (Days.length > 0) {
         var Answer = "Уроки начинаются: \n";
         for ( var i = 0; i < Days.length; i++ ) {
-          // Самописные функции tdotw, getScheduleDay
-          //Answer = Answer + tdotw(Days[i]) + ":\n";
-          Answer = Answer + getScheduleDay(2, Days[i]) + "\n";
+          // Самописные функции getScheduleInfo
+          Answer = Answer + getScheduleInfo(Days[i], 2) + "\n";
         }
       } else { Answer = "Упс... Не знаю, что и сказать, что-то пошло не так..."; }
     ctx.reply( Answer ); // Отправляем готовый ответ пользователю
@@ -333,9 +290,8 @@ var schday2 = function(day_of_the_week, ind) {
     if (Days.length > 0) {
         var Answer = "Уроки заканчиваются: \n";
         for ( var i = 0; i < Days.length; i++ ) {
-          // Самописные функции tdotw, getScheduleDay
-          //Answer = Answer + tdotw(Days[i]) + ":\n";
-          Answer = Answer + getScheduleDay(3, Days[i]) + "\n";
+          // Самописные функции getScheduleInfo
+          Answer = Answer + getScheduleInfo(Days[i], 3) + "\n";
         }
       } else { Answer = "Упс... Не знаю, что и сказать, что-то пошло не так..."; }
     ctx.reply( Answer ); // Отправляем готовый ответ пользователю
@@ -343,9 +299,8 @@ var schday2 = function(day_of_the_week, ind) {
     if (Days.length > 0) {
         var Answer = "Кол-во уроков: \n";
         for ( var i = 0; i < Days.length; i++ ) {
-          // Самописные функции tdotw, getScheduleDay
-          //Answer = Answer + tdotw(Days[i]) + ":\n";
-          Answer = Answer + getScheduleDay(4, Days[i]) + "\n";
+          // Самописные функции getScheduleInfo
+          Answer = Answer + getScheduleInfo(Days[i], 4) + "\n";
         }
       } else { Answer = "Упс... Не знаю, что и сказать, что-то пошло не так..."; }
     ctx.reply( Answer ); // Отправляем готовый ответ пользователю
